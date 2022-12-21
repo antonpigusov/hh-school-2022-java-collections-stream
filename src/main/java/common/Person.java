@@ -6,22 +6,22 @@ import java.util.Objects;
 public class Person {
   private Integer id;
   private String firstName;
-  private String secondName;
-  private String middleName;
+  private String lastName;
+  private String patronymic;
   private Instant createdAt;
 
-  public Person(Integer id, String firstName, String secondName, String middleName, Instant createdAt) {
+  public Person(Integer id, String firstName, String lastName, String patronymic, Instant createdAt) {
     this.id = id;
     this.firstName = firstName;
-    this.secondName = secondName;
-    this.middleName = middleName;
+    this.lastName = lastName;
+    this.patronymic = patronymic;
     this.createdAt = createdAt;
   }
 
-  public Person(Integer id, String firstName, String secondName, Instant createdAt) {
+  public Person(Integer id, String firstName, String lastName, Instant createdAt) {
     this.id = id;
     this.firstName = firstName;
-    this.secondName = secondName;
+    this.lastName = lastName;
     this.createdAt = createdAt;
   }
 
@@ -47,20 +47,20 @@ public class Person {
     this.firstName = firstName;
   }
 
-  public String getSecondName() {
-    return secondName;
+  public String getLastName() {
+    return lastName;
   }
 
-  public void setSecondName(String secondName) {
-    this.secondName = secondName;
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
-  public String getMiddleName() {
-    return middleName;
+  public String getPatronymic() {
+    return patronymic;
   }
 
-  public void setMiddleName(String middleName) {
-    this.middleName = middleName;
+  public void setPatronymic(String patronymic) {
+    this.patronymic = patronymic;
   }
 
   public Instant getCreatedAt() {
@@ -78,14 +78,14 @@ public class Person {
     Person person = (Person) o;
     return Objects.equals(id, person.id) &&
         Objects.equals(firstName, person.firstName) &&
-        Objects.equals(secondName, person.secondName) &&
-        Objects.equals(middleName, person.middleName) &&
+        Objects.equals(lastName, person.lastName) &&
+        Objects.equals(patronymic, person.patronymic) &&
         Objects.equals(createdAt, person.createdAt);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, firstName, secondName, middleName, createdAt);
+    return Objects.hash(id, firstName, lastName, patronymic, createdAt);
   }
 
   @Override
@@ -93,8 +93,8 @@ public class Person {
     return "Person{" +
         "id=" + id +
         ", firstName='" + firstName + '\'' +
-        ", secondName='" + secondName + '\'' +
-        ", middleName='" + middleName + '\'' +
+        ", lastName='" + lastName + '\'' +
+        ", patronymic='" + patronymic + '\'' +
         ", createdAt=" + createdAt +
         '}';
   }

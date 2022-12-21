@@ -3,7 +3,6 @@ package tasks;
 import common.Person;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,67 +20,58 @@ P.P.S Здесь ваши правки желательно прокоммент
  */
 public class Task8 {
 
-  private long count;
+  //убрал переменную за ненадобностью
 
   //Не хотим выдывать апи нашу фальшивую персону, поэтому конвертим начиная со второй
-  public List<String> getNames(List<Person> persons) {
-    if (persons.size() == 0) {
-      return Collections.emptyList();
-    }
-    persons.remove(0);
-    return persons.stream().map(Person::getFirstName).collect(Collectors.toList());
+  public List<String> getNames(List<Person> persons) { //я понял, что мне не очень нравятся названия ФИО в классе Person,
+                                                       //не очень понятно, к чему относится каждое поле из ФИО,
+                                                       //назвал их firstName, lastName и patronymic
+    return persons.isEmpty() ? Collections.emptyList() :
+            persons.stream()
+                    .skip(1) //лучше просто пропустить первый элемент, чем удалять
+                    .map(Person::getFirstName)
+                    .collect(Collectors.toList());
   }
 
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().distinct().collect(Collectors.toSet());
+    return getNames(persons).stream().collect(Collectors.toSet()); //тут идея сама подсказывает, что в distinct() нет смысла, т.к. собираем в Set
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  public String convertPersonToString(Person person) {
+  public String convertPersonToString(Person person) { //я бы все примерно так и оставил, мне так читать легко, но думаю, что нужно добавить еще
+                                                       // и проверки на пустую строку, чтобы не прибавлять лишние пробелы
     String result = "";
-    if (person.getSecondName() != null) {
-      result += person.getSecondName();
+    if (person.getLastName() != null) { //нет смысла делать проверку isEmpty(), т.к. лишний пробел не прибавится
+      result += person.getLastName();
     }
 
-    if (person.getFirstName() != null) {
-      result += " " + person.getFirstName();
+    if (person.getFirstName() != null && !person.getFirstName().isEmpty()) {
+      if(!result.isEmpty())
+        result += " " + person.getFirstName();
+      else result+=person.getFirstName();
     }
 
-    if (person.getSecondName() != null) {
-      result += " " + person.getSecondName();
+    if (person.getPatronymic() != null && !person.getPatronymic().isEmpty()) { //тут должно быть отчество
+      if(!result.isEmpty())
+        result += " " + person.getPatronymic();
+      else result+=person.getPatronymic();
     }
     return result;
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    Map<Integer, String> map = new HashMap<>(1);
-    for (Person person : persons) {
-      if (!map.containsKey(person.getId())) {
-        map.put(person.getId(), convertPersonToString(person));
-      }
-    }
-    return map;
+    return persons.stream().collect(Collectors.toMap(Person::getId, Person::getLastName)); //есть нужный метод
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
-    for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-        }
-      }
-    }
-    return has;
+    return persons1.stream().filter(person -> persons2.contains(person)).findFirst().isPresent();
   }
 
   //...
   public long countEven(Stream<Integer> numbers) {
-    count = 0;
-    numbers.filter(num -> num % 2 == 0).forEach(num -> count++);
-    return count;
+    return numbers.filter(num -> num % 2 == 0).count(); //есть нужный метод
   }
 }
