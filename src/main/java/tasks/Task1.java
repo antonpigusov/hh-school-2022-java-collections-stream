@@ -19,12 +19,12 @@ public class Task1 {
 
   public Task1(PersonService personService) {
     this.personService = personService;
-  }
+  } //Асимптотика O(n)
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = personService.findPersons(personIds);
     return persons.stream()
-            .sorted(Comparator.comparing(p -> personIds.indexOf(p.getId())))
-            .collect(Collectors.toList());
+            .sorted(Comparator.comparing(p -> personIds.indexOf(p.getId()))) //O(n)
+            .collect(Collectors.toList()); //O(n)
   }
 }

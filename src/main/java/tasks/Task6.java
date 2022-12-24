@@ -18,10 +18,10 @@ public class Task6 {
   public static Set<String> getPersonDescriptions(Collection<Person> persons,
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
+    Map<Integer, Area> areaIdToAreaHashMap = areas.stream().collect(Collectors.toMap(Area::getId, area -> area)); //O(n)
     return persons.stream()
-            .flatMap(person -> areas.stream()
-                    .filter(area -> personAreaIds.get(person.getId()).contains(area.getId()))
-                    .map(area -> person.getFirstName() + " - " + area.getName()))
-            .collect(Collectors.toSet());
+            .flatMap(person -> personAreaIds.get(person.getId()).stream()
+                    .map(areaId -> person.getFirstName() + " - " + areaIdToAreaHashMap.get(areaId).getName()))
+            .collect(Collectors.toSet()); //O(m), результат O(n+m)
   }
 }

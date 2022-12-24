@@ -1,11 +1,8 @@
 package tasks;
 
 import common.Person;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,51 +20,41 @@ public class Task8 {
   //убрал переменную за ненадобностью
 
   //Не хотим выдывать апи нашу фальшивую персону, поэтому конвертим начиная со второй
-  public List<String> getNames(List<Person> persons) { //я понял, что мне не очень нравятся названия ФИО в классе Person,
-                                                       //не очень понятно, к чему относится каждое поле из ФИО,
-                                                       //назвал их firstName, lastName и patronymic
-    return persons.isEmpty() ? Collections.emptyList() :
-            persons.stream()
-                    .skip(1) //лучше просто пропустить первый элемент, чем удалять
+  public List<String> getNames(List<Person> persons) {
+    return persons.stream()
+                    .skip(1)  // если нам понадобится в методе использовать элементы, которые мы хотим сначала пропустить,
+                              // то remove не подойдет, т.к. удалит элементы, + remove после удаления сдвигает все элементы,
+                              // чтобы заполнить пустоту, а skip (если правильно понимаю) просто позволяет взять элементы, начиная с нужного
                     .map(Person::getFirstName)
                     .collect(Collectors.toList());
   }
 
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().collect(Collectors.toSet()); //тут идея сама подсказывает, что в distinct() нет смысла, т.к. собираем в Set
+    return new HashSet<>(getNames(persons));
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  public String convertPersonToString(Person person) { //я бы все примерно так и оставил, мне так читать легко, но думаю, что нужно добавить еще
-                                                       // и проверки на пустую строку, чтобы не прибавлять лишние пробелы
-    String result = "";
-    if (person.getLastName() != null) { //нет смысла делать проверку isEmpty(), т.к. лишний пробел не прибавится
-      result += person.getLastName();
-    }
-
-    if (person.getFirstName() != null && !person.getFirstName().isEmpty()) {
-      if(!result.isEmpty())
-        result += " " + person.getFirstName();
-      else result+=person.getFirstName();
-    }
-
-    if (person.getPatronymic() != null && !person.getPatronymic().isEmpty()) { //тут должно быть отчество
-      if(!result.isEmpty())
-        result += " " + person.getPatronymic();
-      else result+=person.getPatronymic();
-    }
-    return result;
+  public String convertPersonToString(Person person) {
+    return Stream.of(person.getSecondName(), person.getFirstName(), person.getMiddleName())
+            .filter(str -> str != null && !str.isEmpty())
+            .collect(Collectors.joining(" "));
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    return persons.stream().collect(Collectors.toMap(Person::getId, Person::getLastName)); //есть нужный метод
+    return persons.stream().distinct().collect(Collectors.toMap(Person::getId, Person::getFirstName));  // не сработает, если будет 2 разных персоны с одинаковым id,
+                                                                                                        // для этого нужно возвращать Map<Integer, Set<String>>
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    return persons1.stream().filter(person -> persons2.contains(person)).findFirst().isPresent();
+    //return persons1.stream().anyMatch(persons2::contains); // исправил, сложность тут получается O(nm), как было в 6 задаче, но вроде бы тут тоже можно проще
+    if (persons2.isEmpty()) // без этой проверки тест упадет в случае, когда на месте persons2 пустая коллекция, не смог придумать, как обойтись без этого условия
+      return false;
+    Map<Integer, Person> person2HashMap = persons2.stream().collect(Collectors.toMap(Person::hashCode, person -> person)); //O(n)
+    return persons1.stream()
+            .anyMatch(person -> person2HashMap.get(person.hashCode()).equals(person)); //O(m), итоговая O(n+m)
   }
 
   //...
