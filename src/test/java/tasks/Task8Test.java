@@ -74,6 +74,7 @@ public class Task8Test {
                 new Person(2, "b", "b", "c", Instant.ofEpochMilli(10)),
                 new Person(3, "v", "b", "c", Instant.ofEpochMilli(10)),
                 new Person(3, "v", "b", "c", Instant.ofEpochMilli(10)),
+                new Person(3, "r", "b", "c", Instant.ofEpochMilli(10)),
                 new Person(4, "s", "b", "c", Instant.ofEpochMilli(10)));
         assertEquals(Map.of(1,"a",2,"b",3,"v",4,"s"),task8.getPersonNames(persons));
     }

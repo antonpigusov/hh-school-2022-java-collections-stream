@@ -22,6 +22,8 @@ public class Task3Test {
   private Person person10;
   private Person person11;
   private Person person12;
+  private Person person13;
+  private Person person14;
 
   @BeforeEach
   void before() {
@@ -38,6 +40,8 @@ public class Task3Test {
     person10 = new Person(10, "Oleg", "Petrov", time.plusSeconds(1));
     person11 = new Person(11, "Anton", "Ivanov", time.plusSeconds(1));
     person12 = new Person(12, "Anton", "Ivanov", time);
+    person13 = new Person(13, "", "Ivanov", time);
+    person14 = new Person(14, "", time);
   }
 
   @Test
@@ -48,6 +52,8 @@ public class Task3Test {
             Task3.sort(List.of(person1, person2, person3, person4, person5, person6, person7, person8, person9, person10, person11, person12)));
     assertEquals(List.of(person7, person8, person6, person5, person12, person11, person2, person1, person3, person10, person4, person9),
             Task3.sort(List.of(person12, person11, person10, person9, person8, person7, person6, person5, person4, person3, person2, person1)));
+    assertEquals(List.of(person14, person13, person12, person11),
+            Task3.sort(List.of(person11, person12, person13, person14)));
   }
 
   @Test

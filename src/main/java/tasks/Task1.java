@@ -4,6 +4,7 @@ import common.Person;
 import common.PersonService;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /*
@@ -19,12 +20,13 @@ public class Task1 {
 
   public Task1(PersonService personService) {
     this.personService = personService;
-  } //Асимптотика O(n)
+  }
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = personService.findPersons(personIds);
-    return persons.stream()
-            .sorted(Comparator.comparing(p -> personIds.indexOf(p.getId()))) //O(n)
-            .collect(Collectors.toList()); //O(n)
+    Map<Integer, Person> idToPersonMap = persons.stream().collect(Collectors.toMap(Person::getId, Function.identity())); // O(n)
+    return personIds.stream().map(idToPersonMap::get).collect(Collectors.toList()); // тут тоже сложность O(n), суммарная O(2n) = O(n)
+                                                                                    // Но если случится так, что personService на один айдишник выдаст 2 разные персоны, то я должен буду в
+                                                                                    // Collectors.toMap добавить merge function
   }
 }

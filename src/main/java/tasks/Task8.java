@@ -43,18 +43,13 @@ public class Task8 {
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    return persons.stream().distinct().collect(Collectors.toMap(Person::getId, Person::getFirstName));  // не сработает, если будет 2 разных персоны с одинаковым id,
-                                                                                                        // для этого нужно возвращать Map<Integer, Set<String>>
+    return persons.stream().collect(Collectors.toMap(Person::getId, Person::getFirstName, (person1, person2) -> person1)); // оставляем 1-ю персону при равных id
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    //return persons1.stream().anyMatch(persons2::contains); // исправил, сложность тут получается O(nm), как было в 6 задаче, но вроде бы тут тоже можно проще
-    if (persons2.isEmpty()) // без этой проверки тест упадет в случае, когда на месте persons2 пустая коллекция, не смог придумать, как обойтись без этого условия
-      return false;
-    Map<Integer, Person> person2HashMap = persons2.stream().collect(Collectors.toMap(Person::hashCode, person -> person)); //O(n)
-    return persons1.stream()
-            .anyMatch(person -> person2HashMap.get(person.hashCode()).equals(person)); //O(m), итоговая O(n+m)
+    HashSet<Person> person2HashSet = new HashSet<>(persons2); //O(m)
+    return persons1.stream().anyMatch(person -> person2HashSet.contains(person)); //O(m+n)
   }
 
   //...
