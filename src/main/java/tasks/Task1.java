@@ -2,9 +2,10 @@ package tasks;
 
 import common.Person;
 import common.PersonService;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /*
 Задача 1
@@ -23,6 +24,9 @@ public class Task1 {
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = personService.findPersons(personIds);
-    return Collections.emptyList();
+    Map<Integer, Person> idToPersonMap = persons.stream().collect(Collectors.toMap(Person::getId, Function.identity())); // O(n)
+    return personIds.stream().map(idToPersonMap::get).collect(Collectors.toList()); // тут тоже сложность O(n), суммарная O(2n) = O(n)
+                                                                                    // Но если случится так, что personService на один айдишник выдаст 2 разные персоны, то я должен буду в
+                                                                                    // Collectors.toMap добавить merge function
   }
 }
